@@ -19,7 +19,7 @@ namespace LoneBackup.App
     {
         static void Main(string[] args) => CommandLineApplication.Execute<Program>(args);
 
-        [Option(Description = "Configuration file path")]
+        [Option(Description = "Configuration file path", ShortName = "c", ShowInHelpText = true)]
         public string ConfigFile { get; } = "config.json";
 
         private AppConfig _config;
@@ -41,7 +41,6 @@ namespace LoneBackup.App
             var mysqlService = new MySqlService(_config);
             var azureService = new AzureStorageService(_config);
 
-
             Console.WriteLine("Compressing...");
 
             // using var fsOut = File.Create("zipfile.zip");
@@ -56,7 +55,7 @@ namespace LoneBackup.App
             foreach (var dbName in _config.Databases)
             {
                 var backupStream = mysqlService.GetDatabaseBackup(dbName);
-                
+
                 var entry = new ZipEntry(dbName + ".sql") {DateTime = DateTime.Now};
                 localZipStream.PutNextEntry(entry);
                 StreamUtils.Copy(backupStream, localZipStream, new byte[4096]);
@@ -72,7 +71,7 @@ namespace LoneBackup.App
             Console.WriteLine($"Archive size: {zippedFileStream.Length / 1024} kb");
 
             await azureService.UploadToStorage(zippedFileStream);
-            
+
             // TODO: remove old archives (rotation)
 
             stopWatch.Stop();
@@ -92,7 +91,7 @@ namespace LoneBackup.App
         {
             var builder = new ConfigurationBuilder()
                 .AddJsonFile(ConfigFile);
-            
+
             var cRoot = builder.Build();
 
             var azureConnectionString = cRoot["AzureStorageConnectionString"];
