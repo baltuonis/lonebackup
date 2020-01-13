@@ -1,0 +1,14 @@
+{
+  "AzureStorageConnectionString": "storagestring",
+  "AzureStorageContainer": "container",
+  "AzureStorageFolder": "folder",
+  "ArchivePassword": "abcd",
+  "MySQL": {
+    "Host": "localhost",
+    "Port": 3306,
+    "User": "root",
+    "Pwd": "toor",
+    "Databases": "dbname"
+  },
+  "SentryDsn": ""
+}
