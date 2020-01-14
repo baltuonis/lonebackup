@@ -11,6 +11,7 @@ jobs:
     - uses: actions/checkout@v1
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
+      working-directory: ./LoneBackup.App
       with:
         dotnet-version: 2.2.108
     - name: Build with dotnet
