@@ -10,9 +10,10 @@ namespace LoneBackup.App
         public string DbUser { get; }
         public string DbPwd { get; }
         public string[] Databases { get; }
+        public bool CreateLocalFile { get; }
 
         public AppConfig(string azureConnectionString, string azureContainer, string azureFolder, string archivePassword,
-            string dbHost, string dbUser, string dbPwd, string[] databases)
+            string dbHost, string dbUser, string dbPwd, string[] databases, bool createLocalFile)
         {
             AzureConnectionString = azureConnectionString;
             AzureContainer = azureContainer;
@@ -22,6 +23,7 @@ namespace LoneBackup.App
             DbUser = dbUser;
             DbPwd = dbPwd;
             Databases = databases;
+            CreateLocalFile = createLocalFile;
         }
     }
 }

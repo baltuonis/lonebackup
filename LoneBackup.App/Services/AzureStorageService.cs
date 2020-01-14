@@ -17,10 +17,9 @@ namespace LoneBackup.App.Services
             _client = CreateStorageClient();
         }
 
-        public async Task UploadToStorage(Stream zippedFileStream)
+        public async Task UploadToStorage(Stream zippedFileStream, string filename)
         {
-            var timestamp = DateTime.Now.ToString("s", DateTimeFormatInfo.InvariantInfo);
-            var filePath = Path.Combine("librum", $"db-backup-{timestamp}.zip");
+            var filePath = Path.Combine(_appConfig.AzureFolder, filename);
 
             Console.WriteLine("File path: " + filePath);
             Console.WriteLine("Upload: in progress...");

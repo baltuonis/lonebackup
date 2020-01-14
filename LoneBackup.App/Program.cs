@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using ICSharpCode.SharpZipLib.Core;
@@ -43,34 +45,50 @@ namespace LoneBackup.App
 
             Console.WriteLine("Compressing...");
 
-            // using var fsOut = File.Create("zipfile.zip");
-            // using (var localZipStream = new ZipOutputStream(fsOut))
             using var zippedFileStream = new ObservableMemoryStream(UploadProgressCallback);
-            using var localZipStream = new ZipOutputStream(zippedFileStream);
+            // using var zippedFileStream = new MemoryStream();
+            using var zipStream = new ZipOutputStream(zippedFileStream);
 
-            localZipStream.SetLevel(9);
-            localZipStream.Password = _config.ArchivePassword;
+            zipStream.SetLevel(9);
+            zipStream.Password = _config.ArchivePassword;
 
             // Add zip entries for each database
             foreach (var dbName in _config.Databases)
             {
                 var backupStream = mysqlService.GetDatabaseBackup(dbName);
 
-                var entry = new ZipEntry(dbName + ".sql") {DateTime = DateTime.Now};
-                localZipStream.PutNextEntry(entry);
-                StreamUtils.Copy(backupStream, localZipStream, new byte[4096]);
-                localZipStream.CloseEntry();
-                localZipStream.IsStreamOwner = false;
-                backupStream.Dispose();
+                var entry = new ZipEntry(ZipEntry.CleanName(dbName + ".sql"))
+                {
+                    DateTime = DateTime.Now,
+                    Size = backupStream.Length,
+                };
+                zipStream.PutNextEntry(entry);
+                StreamUtils.Copy(backupStream, zipStream, new byte[4096]);
+                zipStream.CloseEntry();
                 Console.WriteLine($"DB backup `{dbName}` added.");
             }
 
             // Zip file completed
+            zipStream.Finish();
             zippedFileStream.Position = 0;
+
+            var timestamp = DateTime.Now.ToString("s", DateTimeFormatInfo.InvariantInfo);
+            var filename = $"db-backup-{timestamp}.zip";
+
+            if (_config.CreateLocalFile)
+            {
+                using (var fsOut = File.Create(filename))
+                {
+                    // using var localZipFileStream = new ZipOutputStream(fsOut);
+                    zippedFileStream.CopyTo(fsOut);
+                    zippedFileStream.Position = 0;
+                }
+            }
+
             Console.WriteLine("Compression complete");
             Console.WriteLine($"Archive size: {zippedFileStream.Length / 1024} kb");
 
-            await azureService.UploadToStorage(zippedFileStream);
+            await azureService.UploadToStorage(zippedFileStream, filename);
 
             // TODO: remove old archives (rotation)
 
@@ -78,7 +96,7 @@ namespace LoneBackup.App
             var ts = stopWatch.Elapsed;
             var elapsedTime = $"{ts.Hours:00}:{ts.Minutes:00}:{ts.Seconds:00}.{ts.Milliseconds / 10:00}";
             Console.WriteLine($"Backup complete \nTook {elapsedTime}");
-            return 1;
+            return 0;
         }
 
         private void UploadProgressCallback(long current, long length)
@@ -102,10 +120,10 @@ namespace LoneBackup.App
             var dbUser = cRoot["MySQL:User"];
             var dbPwd = cRoot["MySQL:Pwd"];
             var databases = cRoot["MySQL:Databases"].Split(",");
+            var createLocalFile = Convert.ToBoolean(cRoot["CreateLocalFile"]);
 
             var config = new AppConfig(azureConnectionString, azureContainer, azureFolder, archivePassword, dbHost,
-                dbUser,
-                dbPwd, databases);
+                dbUser, dbPwd, databases, createLocalFile);
 
             // TODO: validate configuration
             // TODO: db count > 0
