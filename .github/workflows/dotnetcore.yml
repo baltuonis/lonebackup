@@ -15,4 +15,4 @@ jobs:
         dotnet-version: 2.2.108
     - name: Build with dotnet
       working-directory: ./LoneBackup.App
-      run: publish -r linux-x64 -c Release /p:PublishSingleFile=true /p:PublishTrimmed=true 
+      run: dotnet publish -r linux-x64 -c Release /p:PublishSingleFile=true /p:PublishTrimmed=true 
