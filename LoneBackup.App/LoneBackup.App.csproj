@@ -3,9 +3,17 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>netcoreapp3.1</TargetFramework>
-<!--        <PublishTrimmed>true</PublishTrimmed>-->
+        
+        <PublishReadyToRun>false</PublishReadyToRun>
+<!--        <PublishReadyToRunShowWarnings>true</PublishReadyToRunShowWarnings>-->
+        <!--        <PublishSingleFile>true</PublishSingleFile>-->
+<!--        <PublishTrimmed>True</PublishTrimmed>-->
     </PropertyGroup>
 
+    <ItemGroup>
+<!--        <TrimmerRootAssembly Include="System.Threading.Tasks" />-->
+    </ItemGroup>
+    
     <ItemGroup>
         <PackageReference Include="Azure.Storage.Blobs" Version="12.2.0" />
         <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="2.5.0" />
@@ -20,8 +28,8 @@
         <Content Include="config.json">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
-        <Content Include="config.local.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        <Content Include="config.local.json" Condition="Exists('config.local.json')">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
 
