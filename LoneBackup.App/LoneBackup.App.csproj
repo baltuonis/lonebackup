@@ -9,10 +9,6 @@
         <!--        <PublishSingleFile>true</PublishSingleFile>-->
 <!--        <PublishTrimmed>True</PublishTrimmed>-->
     </PropertyGroup>
-
-    <ItemGroup>
-<!--        <TrimmerRootAssembly Include="System.Threading.Tasks" />-->
-    </ItemGroup>
     
     <ItemGroup>
         <PackageReference Include="Azure.Storage.Blobs" Version="12.2.0" />

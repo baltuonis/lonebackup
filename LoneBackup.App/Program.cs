@@ -8,7 +8,7 @@ using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 using LoneBackup.App.Services;
 using McMaster.Extensions.CommandLineUtils;
-using Microsoft.Extensions.Configuration;
+using ConfigurationBuilder = LoneBackup.App.Config.ConfigurationBuilder;
 
 namespace LoneBackup.App
 {
@@ -23,14 +23,17 @@ namespace LoneBackup.App
 
         [Option(Description = "Configuration file path", ShortName = "c", ShowInHelpText = true)]
         public string ConfigFile { get; } = "config.json";
+        
+        private const string APP_VERSION = "0.0.3";
 
         private AppConfig _config;
+        private bool _uploading = false;
 
         public async Task<int> OnExecuteAsync(CommandLineApplication app, CancellationToken cancellationToken = default)
         {
             var stopWatch = new Stopwatch();
             stopWatch.Start();
-            Console.WriteLine("LoneBackup v0.9.0");
+            Console.WriteLine("LoneBackup v" + APP_VERSION);
 
             if (string.IsNullOrEmpty(ConfigFile))
             {
@@ -38,7 +41,8 @@ namespace LoneBackup.App
                 return 0;
             }
 
-            _config = BuildConfiguration();
+            var configuration = new ConfigurationBuilder(ConfigFile);
+            _config = configuration.Build();
 
             var mysqlService = new MySqlService(_config);
             var azureService = new AzureStorageService(_config);
@@ -79,7 +83,6 @@ namespace LoneBackup.App
             {
                 using (var fsOut = File.Create(filename))
                 {
-                    // using var localZipFileStream = new ZipOutputStream(fsOut);
                     zippedFileStream.CopyTo(fsOut);
                     zippedFileStream.Position = 0;
                 }
@@ -88,6 +91,7 @@ namespace LoneBackup.App
             Console.WriteLine("Compression complete");
             Console.WriteLine($"Archive size: {zippedFileStream.Length / 1024} kb");
 
+            _uploading = true;
             await azureService.UploadToStorage(zippedFileStream, filename);
 
             // TODO: remove old archives (rotation)
@@ -101,34 +105,9 @@ namespace LoneBackup.App
 
         private void UploadProgressCallback(long current, long length)
         {
+            if (!_uploading) return;
             var percent = Convert.ToDouble(current) / length * 100;
             Console.WriteLine($"Upload: {percent:F0}%");
-        }
-
-        private AppConfig BuildConfiguration()
-        {
-            var builder = new ConfigurationBuilder()
-                .AddJsonFile(ConfigFile);
-
-            var cRoot = builder.Build();
-
-            var azureConnectionString = cRoot["AzureStorageConnectionString"];
-            var azureContainer = cRoot["AzureStorageContainer"];
-            var azureFolder = cRoot["AzureStorageFolder"];
-            var archivePassword = cRoot["ArchivePassword"];
-            var dbHost = cRoot["MySQL:Host"];
-            var dbUser = cRoot["MySQL:User"];
-            var dbPwd = cRoot["MySQL:Pwd"];
-            var databases = cRoot["MySQL:Databases"].Split(",");
-            var createLocalFile = Convert.ToBoolean(cRoot["CreateLocalFile"]);
-
-            var config = new AppConfig(azureConnectionString, azureContainer, azureFolder, archivePassword, dbHost,
-                dbUser, dbPwd, databases, createLocalFile);
-
-            // TODO: validate configuration
-            // TODO: db count > 0
-            // TODO: remove duplicates from dbs
-            return config;
         }
     }
 }

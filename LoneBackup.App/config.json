@@ -10,5 +10,6 @@
     "Pwd": "toor",
     "Databases": "dbname"
   },
-  "SentryDsn": ""
+  "SentryDsn": "",
+  "CreateLocalFile": false
 }
