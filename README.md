@@ -15,3 +15,4 @@ lonebackup -c config.local.json
 
 1. Backup rotation
 1. https://github.com/actions/upload-release-asset
+1.
