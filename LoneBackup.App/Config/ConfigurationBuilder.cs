@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Microsoft.Extensions.Configuration;
 
 namespace LoneBackup.App.Config
@@ -12,6 +13,7 @@ namespace LoneBackup.App.Config
         {
             _configFilename = configFilename;
             var builder = new Microsoft.Extensions.Configuration.ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile(_configFilename);
             _configRoot = builder.Build();
         }
