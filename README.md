@@ -25,7 +25,7 @@ Sample `config.json`
     "Port": 3306,
     "User": "root",
     "Pwd": "toor",
-    "Databases": "dbname"
+    "Databases": "dbname1,dbname2,dbname3"
   },
   "SentryDsn": "",
   "CreateLocalFile": false
