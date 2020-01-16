@@ -5,13 +5,14 @@ MySql
 AzureStorage
 Sentry?
 
-## Usage
+## Sample usage
 
-```
-lonebackup -c config.local.json
+```bash
+lonebackup -c config.local.json 
+# (default: config.json)
 ```
 
-Sample config.json
+Sample `config.json`
 
 ```json
 {
@@ -30,6 +31,18 @@ Sample config.json
   "CreateLocalFile": false
 }
 ```
+
+Then create a cron entry
+
+```bash
+crontab -e
+```
+
+```crontab
+5 1 * * * cd /home/devops/backup/ && ./lonebackup-x64
+```
+
+## Build
 
 ## TODO:
 
