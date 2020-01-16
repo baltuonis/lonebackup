@@ -24,7 +24,7 @@ namespace LoneBackup.App
         [Option(Description = "Configuration file path", ShortName = "c", ShowInHelpText = true)]
         public string ConfigFile { get; } = "config.json";
         
-        private const string APP_VERSION = "0.0.3";
+        private const string APP_VERSION = "0.0.5";
 
         private AppConfig _config;
         private bool _uploading = false;

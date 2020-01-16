@@ -16,7 +16,7 @@ namespace LoneBackup.App.Services
         public Stream GetDatabaseBackup(string dbName)
         {
             var connString =
-                $"server={_appConfig.DbHost};user={_appConfig.DbUser};pwd={_appConfig.DbPwd};database={dbName};";
+                $"server={_appConfig.DbHost};user={_appConfig.DbUser};pwd={_appConfig.DbPwd};database={dbName};port={_appConfig.DbPort};";
 
             // Important Additional Connection Options
             connString += "charset=utf8;convertzerodatetime=true;";

@@ -26,6 +26,7 @@ namespace LoneBackup.App.Config
             var azureStorageFolder = GetConfigString("AzureStorageFolder");
             var archivePassword = GetConfigString("ArchivePassword");
             var mySqlHost = GetConfigString("MySQL:Host");
+            var mySqlPort = GetConfigString("MySQL:Port");
             var mySqlUser = GetConfigString("MySQL:User");
             var mySqlPwd = GetConfigString("MySQL:Pwd");
             var mysqlDatabases = GetConfigStringArray("MySQL:Databases");
@@ -37,8 +38,8 @@ namespace LoneBackup.App.Config
                 
             }
 
-            var config = new AppConfig(azureConnectionString, azureStorageContainer, azureStorageFolder, archivePassword, mySqlHost,
-                mySqlUser, mySqlPwd, mysqlDatabases, createLocalFile);
+            var config = new AppConfig(azureConnectionString, azureStorageContainer, azureStorageFolder, archivePassword, 
+                mySqlHost, mySqlPort, mySqlUser, mySqlPwd, mysqlDatabases, createLocalFile);
             
             return config;
         }
