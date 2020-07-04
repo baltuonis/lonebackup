@@ -23,8 +23,8 @@ namespace LoneBackup.App
 
         [Option(Description = "Configuration file path", ShortName = "c", ShowInHelpText = true)]
         public string ConfigFile { get; } = "config.json";
-        
-        private const string APP_VERSION = "0.0.5";
+
+        private const string APP_VERSION = "0.0.6";
 
         private AppConfig _config;
         private bool _uploading = false;
@@ -59,7 +59,20 @@ namespace LoneBackup.App
             // Add zip entries for each database
             foreach (var dbName in _config.Databases)
             {
-                var backupStream = mysqlService.GetDatabaseBackup(dbName);
+                Stream backupStream;
+                try
+                {
+                    backupStream = mysqlService.GetDatabaseBackup(dbName);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed access database `{dbName}`. Exception:");
+                    Console.WriteLine(ex.Message);
+                    // TODO: log sentry
+                    continue;
+                }
+
+                if (backupStream == null) continue;
 
                 var entry = new ZipEntry(ZipEntry.CleanName(dbName + ".sql"))
                 {
