@@ -24,7 +24,7 @@ namespace LoneBackup.App
         [Option(Description = "Configuration file path", ShortName = "c", ShowInHelpText = true)]
         public string ConfigFile { get; } = "config.json";
 
-        private const string APP_VERSION = "0.0.6";
+        private const string APP_VERSION = "0.0.8";
 
         private AppConfig _config;
         private bool _uploading = false;
@@ -67,9 +67,10 @@ namespace LoneBackup.App
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Failed access database `{dbName}`. Exception:");
-                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex);
                     // TODO: log sentry
                     continue;
+                    // TODO: failed count
                 }
 
                 if (backupStream == null) continue;

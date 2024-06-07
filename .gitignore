@@ -3,3 +3,4 @@ obj/
 /packages/
 config.local.json
 .idea
+publish
