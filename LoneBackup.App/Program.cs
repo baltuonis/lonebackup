@@ -68,7 +68,7 @@ namespace LoneBackup.App
                 {
                     Console.WriteLine($"Failed access database `{dbName}`. Exception:");
                     Console.WriteLine(ex);
-                    // TODO: log sentry
+                    // TODO: log app insights
                     continue;
                     // TODO: failed count
                 }

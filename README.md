@@ -39,7 +39,7 @@ crontab -e
 ```
 
 ```crontab
-5 1 * * * cd /home/devops/backup/ && ./lonebackup-x64
+5 1 * * * cd /var/lonebackup && ./LoneBackup.App
 ```
 
 ## Build

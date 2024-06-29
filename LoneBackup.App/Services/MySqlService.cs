@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 
 namespace LoneBackup.App.Services
 {
