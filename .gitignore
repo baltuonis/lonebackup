@@ -2,5 +2,8 @@ bin/
 obj/
 /packages/
 config.local.json
+config.remote.json
 .idea
 publish
+/Deploy
+.directory

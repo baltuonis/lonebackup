@@ -1,0 +1,7 @@
+FROM mcr.microsoft.com/dotnet/runtime:8.0-jammy-chiseled
+
+WORKDIR /app
+COPY lonebackup-x64 .
+COPY config.json .
+
+ENTRYPOINT ["./lonebackup-x64"]

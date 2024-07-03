@@ -1,46 +1,54 @@
 ﻿using System;
+using System.CommandLine;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 using LoneBackup.App.Services;
 using LoneBackup.App.Utils;
-using McMaster.Extensions.CommandLineUtils;
 using ConfigurationBuilder = LoneBackup.App.Config.ConfigurationBuilder;
 
 namespace LoneBackup.App;
 
-[Command(Name = "lonebackup",
-    Description =
-        "Simple, zero-dependencies, standalone backup utility for uploading MySQL/MariaDB dumps to Azure Blob Storage.")]
-[HelpOption("-?")]
 public class Program
 {
-    static void Main(string[] args) => CommandLineApplication.Execute<Program>(args);
+    private const string AppVersion = "1.0.2";
 
-    [Option(Description = "Configuration file path", ShortName = "c", ShowInHelpText = true)]
-    public string ConfigFile { get; set; } = "config.json";
+    static async Task<int> Main(string[] args)
+    {
+        var configFileOption = new Option<string>(
+            name: "-c",
+            description: "Configuration file path (default: config.json)",
+            getDefaultValue: () => "config.json");
 
-    private const string AppVersion = "1.0.0";
+        var rootCommand = new RootCommand("Simple MySQL/MariaDB backup utility");
+        rootCommand.AddOption(configFileOption);
 
-    private AppConfig _config;
-    private bool _uploading;
+        rootCommand.SetHandler(async (configFile) =>
+            {
+                await OnExecuteAsync(configFile);
+            },
+            configFileOption);
 
-    public async Task<int> OnExecuteAsync(CommandLineApplication app, CancellationToken cancellationToken = default)
+        return await rootCommand.InvokeAsync(args);
+    }
+
+    private static AppConfig _config;
+    private static bool _uploading;
+
+    public static async Task<int> OnExecuteAsync(string configFile)
     {
         var stopWatch = Stopwatch.StartNew();
         Console.WriteLine("LoneBackup v" + AppVersion);
 
-        if (string.IsNullOrEmpty(ConfigFile))
+        if (string.IsNullOrEmpty(configFile))
         {
-            app.ShowHelp();
             return 0;
         }
 
-        var configuration = new ConfigurationBuilder(ConfigFile);
+        var configuration = new ConfigurationBuilder(configFile);
         _config = configuration.Build();
 
         var mysqlService = new MySqlService(_config);
@@ -58,10 +66,13 @@ public class Program
         // Add zip entries for each database
         foreach (var dbName in _config.Databases)
         {
-            Stream backupStream;
+            // Stream backupStream;
+            var entry = new ZipEntry(ZipEntry.CleanName(dbName + ".sql")) { DateTime = DateTime.Now, Size = -1, };
+            await zipStream.PutNextEntryAsync(entry);
+            
             try
             {
-                backupStream = mysqlService.GetDatabaseBackup(dbName);
+                 mysqlService.GetDatabaseBackup(dbName, zipStream);
             }
             catch (Exception ex)
             {
@@ -71,15 +82,8 @@ public class Program
             }
 
             successfulDumpsCount++;
-                
-            var entry = new ZipEntry(ZipEntry.CleanName(dbName + ".sql"))
-            {
-                DateTime = DateTime.Now,
-                Size = backupStream.Length,
-            };
-            zipStream.PutNextEntry(entry);
-            StreamUtils.Copy(backupStream, zipStream, new byte[4096]);
             zipStream.CloseEntry();
+            
             Console.WriteLine($"DB: `{dbName}` dumped");
         }
 
@@ -95,16 +99,16 @@ public class Program
         var timestamp = DateTime.Now.ToString("s", DateTimeFormatInfo.InvariantInfo);
         var filename = $"db-backup-{timestamp}.zip";
 
+        Console.WriteLine("Compression complete");
+        
         if (_config.CreateLocalFile)
         {
-            using (var fsOut = File.Create(filename))
-            {
-                zippedFileStream.CopyTo(fsOut);
-                zippedFileStream.Position = 0;
-            }
+            await using var fsOut = File.Create(filename);
+            await zippedFileStream.CopyToAsync(fsOut);
+            zippedFileStream.Position = 0;
+            Console.WriteLine($"Dump archive saved to: {filename}");
         }
 
-        Console.WriteLine("Compression complete");
         Console.WriteLine($"Archive size: {zippedFileStream.Length / 1024} kb");
 
         _uploading = true;
@@ -117,9 +121,12 @@ public class Program
         return 0;
     }
 
-    private void UploadProgressCallback(long current, long length)
+    private static void UploadProgressCallback(long current, long length)
     {
-        if (!_uploading) return;
+        if (!_uploading) 
+            return;
+        
+        // TODO: don't do too frequent updates...
         var percent = Convert.ToDouble(current) / length * 100;
         Console.WriteLine($"Upload: {percent:F0}%");
     }
