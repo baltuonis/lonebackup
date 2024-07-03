@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 using Azure.Core.Pipeline;
 using Azure.Storage.Blobs;
@@ -34,6 +35,10 @@ public class AzureStorageService
         {
             RetryPolicy = new RetryPolicy(3),
         };
+        
+        // TODO: check
+        ServicePointManager.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
+
         var blobSvc = new BlobServiceClient(_appConfig.AzureConnectionString, blobClientOptions);
         var containerClient = blobSvc.GetBlobContainerClient(_appConfig.AzureContainer);
         
