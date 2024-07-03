@@ -24,10 +24,10 @@ public class Program
     [Option(Description = "Configuration file path", ShortName = "c", ShowInHelpText = true)]
     public string ConfigFile { get; set; } = "config.json";
 
-    private const string AppVersion = "0.0.7";
+    private const string AppVersion = "1.0.0";
 
     private AppConfig _config;
-    private bool _uploading = false;
+    private bool _uploading;
 
     public async Task<int> OnExecuteAsync(CommandLineApplication app, CancellationToken cancellationToken = default)
     {
@@ -46,7 +46,7 @@ public class Program
         var mysqlService = new MySqlService(_config);
         var azureService = new AzureStorageService(_config);
 
-        Console.WriteLine("Connecting to databases...");
+        Console.WriteLine("Starting database(s) dump process");
 
         using var zippedFileStream = new ObservableMemoryStream(UploadProgressCallback);
         using var zipStream = new ZipOutputStream(zippedFileStream);

@@ -26,11 +26,11 @@ namespace LoneBackup.App.Services
             using var mySqlBackup = new MySqlBackup(cmd);
             var backupStream = new MemoryStream();
 
-            Console.WriteLine($"DB: Opening connection to {conn.DataSource}/{conn.Database}");
+            Console.WriteLine($"DB: Connecting to {conn.DataSource}/{conn.Database}");
 
             cmd.Connection = conn;
             conn.Open();
-            Console.WriteLine($"DB: Dumping `{conn.Database}` ...");
+            Console.WriteLine($"DB: Dumping `{conn.Database}`...");
 
             mySqlBackup.ExportToMemoryStream(backupStream);
             backupStream.Seek(0, SeekOrigin.Begin);

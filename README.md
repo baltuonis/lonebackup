@@ -48,3 +48,4 @@ crontab -e
 1. Backup rotation
 2. App Insights logging
 3. Upgrade Azure Storage packages
+4. Create a github action for releases
