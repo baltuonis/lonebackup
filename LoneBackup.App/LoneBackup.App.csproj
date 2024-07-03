@@ -3,7 +3,6 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net8.0</TargetFramework>
-<!--        <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>-->
     </PropertyGroup>
 
     <PropertyGroup>
@@ -28,10 +27,6 @@
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
         <None Include="config.local.json" Condition="Exists('config.local.json')" />
-        <None Remove="config.local.json" />
-        <Content Include="config.local.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
     </ItemGroup>
 
 </Project>
