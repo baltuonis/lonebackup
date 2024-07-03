@@ -52,10 +52,6 @@ crontab -e
 
 ## Deployments
 
-### Normal
-
-[//]: # (TODO:)
-
 ### Docker
 
 Use docker when having dependency problems on remote machines (old servers):

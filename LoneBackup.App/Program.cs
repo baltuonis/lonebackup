@@ -106,9 +106,9 @@ public class Program
 
         if (_config.CreateLocalFile)
         {
-            using (var fsOut = File.Create(filename))
+            await using (var fsOut = File.Create(filename))
             {
-                zippedFileStream.CopyTo(fsOut);
+                await zippedFileStream.CopyToAsync(fsOut);
                 zippedFileStream.Position = 0;
             }
         }
