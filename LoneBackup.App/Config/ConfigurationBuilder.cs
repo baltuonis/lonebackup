@@ -49,7 +49,7 @@ namespace LoneBackup.App.Config
         {
             var values = _configRoot.GetSection(section)
                 .GetChildren()
-                .Select(c => c.Value)
+                .Select(c => c.Value?.Trim())
                 .ToArray();
             
             foreach (var item in values)

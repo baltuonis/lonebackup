@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
+using Azure.Core.Pipeline;
 using Azure.Storage.Blobs;
 
 namespace LoneBackup.App.Services;
@@ -29,13 +30,17 @@ public class AzureStorageService
 
     private BlobContainerClient CreateStorageClient()
     {
-        var blobSvc = new BlobServiceClient(_appConfig.AzureConnectionString);
+        var blobClientOptions = new BlobClientOptions
+        {
+            RetryPolicy = new RetryPolicy(3),
+        };
+        var blobSvc = new BlobServiceClient(_appConfig.AzureConnectionString, blobClientOptions);
         var containerClient = blobSvc.GetBlobContainerClient(_appConfig.AzureContainer);
         
         Console.WriteLine($"Azure Storage: {blobSvc.Uri}");
         Console.WriteLine($"Blob Container: {_appConfig.AzureContainer}");
 
-        // var r = containerClient.CreateIfNotExists();
+        containerClient.CreateIfNotExists();
         
         return containerClient;
     }

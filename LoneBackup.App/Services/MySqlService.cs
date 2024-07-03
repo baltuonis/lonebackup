@@ -30,7 +30,7 @@ namespace LoneBackup.App.Services
 
             cmd.Connection = conn;
             conn.Open();
-            Console.WriteLine($"DB: Backing up `{conn.Database}` ...");
+            Console.WriteLine($"DB: Dumping `{conn.Database}` ...");
 
             mySqlBackup.ExportToMemoryStream(backupStream);
             backupStream.Seek(0, SeekOrigin.Begin);

@@ -65,7 +65,7 @@ public class Program
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Failed access database `{dbName}`. Exception:");
+                Console.WriteLine($"DB: Failed access database `{dbName}`. Exception:");
                 Console.WriteLine(ex);
                 continue;
             }
@@ -80,7 +80,7 @@ public class Program
             zipStream.PutNextEntry(entry);
             StreamUtils.Copy(backupStream, zipStream, new byte[4096]);
             zipStream.CloseEntry();
-            Console.WriteLine($"DB backup `{dbName}` added.");
+            Console.WriteLine($"DB: `{dbName}` dumped");
         }
 
         if (successfulDumpsCount == 0)
