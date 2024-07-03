@@ -8,8 +8,9 @@
     "Port": 3306,
     "User": "root",
     "Pwd": "toor",
-    "Databases": "dbname"
+    "Databases": [
+      "wordpress" 
+    ]
   },
-  "SentryDsn": "",
-  "CreateLocalFile": false
+  "CreateLocalFile": true
 }

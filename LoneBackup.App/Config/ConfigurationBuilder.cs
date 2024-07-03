@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using Microsoft.Extensions.Configuration;
 
 namespace LoneBackup.App.Config
@@ -34,7 +35,7 @@ namespace LoneBackup.App.Config
 
             if (mysqlDatabases.Length == 0)
             {
-                throw new Exception($"Config error: please add at least one database inside `MySQL:Databases`");
+                throw new Exception("Config error: please add at least one database inside `MySQL:Databases`");
                 
             }
 
@@ -44,14 +45,17 @@ namespace LoneBackup.App.Config
             return config;
         }
 
-        private string[] GetConfigStringArray(string paramName)
+        private string[] GetConfigStringArray(string section)
         {
-            var values = GetConfigString(paramName).Split(",");
+            var values = _configRoot.GetSection(section)
+                .GetChildren()
+                .Select(c => c.Value)
+                .ToArray();
             
             foreach (var item in values)
             {
-                if (string.IsNullOrWhiteSpace(paramName))
-                    throw new Exception($"Config error: argument `{nameof(paramName)}` has an empty member");
+                if (string.IsNullOrWhiteSpace(item))
+                    throw new Exception($"Config error: argument `{nameof(section)}` has an empty member");
             }
             
             return values;

@@ -1,9 +1,8 @@
 # LoneBackup
 
-Dotnet core
-MySql
-AzureStorage
-Sentry?
+A simple single executable tool to back up your MySQL/MariaDB databases to Azure Blob Storage.
+
+Purpose: no docker, no fancy configuration files, low learning curve
 
 ## Sample usage
 
@@ -25,7 +24,9 @@ Sample `config.json`
     "Port": 3306,
     "User": "root",
     "Pwd": "toor",
-    "Databases": "dbname1,dbname2,dbname3"
+    "Databases": [
+      "dbname1"
+    ]
   },
   "SentryDsn": "",
   "CreateLocalFile": false
@@ -42,8 +43,8 @@ crontab -e
 5 1 * * * cd /var/lonebackup && ./lonebackup-x64
 ```
 
-## Build
-
 ## TODO:
 
 1. Backup rotation
+2. App Insights logging
+3. Upgrade Azure Storage packages
