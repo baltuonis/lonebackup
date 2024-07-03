@@ -1,10 +1,10 @@
 using System;
 using System.Globalization;
 using System.IO;
-using System.Net;
 using System.Threading.Tasks;
 using Azure.Core.Pipeline;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 
 namespace LoneBackup.App.Services;
 
@@ -25,7 +25,7 @@ public class AzureStorageService
 
         Console.WriteLine("Uploading to Azure Storage: " + filePath);
         var blobClient = _client.GetBlobClient(filePath);
-        await blobClient.UploadAsync(zippedFileStream);
+        await blobClient.UploadAsync(zippedFileStream, accessTier: AccessTier.Cool);
         Console.WriteLine("Upload complete");
     }
 
@@ -36,9 +36,6 @@ public class AzureStorageService
             RetryPolicy = new RetryPolicy(3),
         };
         
-        // TODO: check
-        ServicePointManager.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
-
         var blobSvc = new BlobServiceClient(_appConfig.AzureConnectionString, blobClientOptions);
         var containerClient = blobSvc.GetBlobContainerClient(_appConfig.AzureContainer);
         

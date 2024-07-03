@@ -22,4 +22,7 @@ jobs:
         run: dotnet build
 
       - name: Create linux executable
-        run: ./publish-linux.sh
+        run: |
+          chmod +x ./publish-linux.sh
+          ./publish-linux.sh
+        shell: bash

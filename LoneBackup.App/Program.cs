@@ -66,10 +66,13 @@ public class Program
         // Add zip entries for each database
         foreach (var dbName in _config.Databases)
         {
-            Stream backupStream;
+            // Stream backupStream;
+            var entry = new ZipEntry(ZipEntry.CleanName(dbName + ".sql")) { DateTime = DateTime.Now, Size = -1, };
+            await zipStream.PutNextEntryAsync(entry);
+            
             try
             {
-                backupStream = mysqlService.GetDatabaseBackup(dbName);
+                 mysqlService.GetDatabaseBackup(dbName, zipStream);
             }
             catch (Exception ex)
             {
@@ -79,14 +82,6 @@ public class Program
             }
 
             successfulDumpsCount++;
-
-            var entry = new ZipEntry(ZipEntry.CleanName(dbName + ".sql"))
-            {
-                DateTime = DateTime.Now,
-                Size = backupStream.Length,
-            };
-            zipStream.PutNextEntry(entry);
-            StreamUtils.Copy(backupStream, zipStream, new byte[4096]);
             zipStream.CloseEntry();
             
             Console.WriteLine($"DB: `{dbName}` dumped");
@@ -104,16 +99,16 @@ public class Program
         var timestamp = DateTime.Now.ToString("s", DateTimeFormatInfo.InvariantInfo);
         var filename = $"db-backup-{timestamp}.zip";
 
+        Console.WriteLine("Compression complete");
+        
         if (_config.CreateLocalFile)
         {
-            await using (var fsOut = File.Create(filename))
-            {
-                await zippedFileStream.CopyToAsync(fsOut);
-                zippedFileStream.Position = 0;
-            }
+            await using var fsOut = File.Create(filename);
+            await zippedFileStream.CopyToAsync(fsOut);
+            zippedFileStream.Position = 0;
+            Console.WriteLine($"Dump archive saved to: {filename}");
         }
 
-        Console.WriteLine("Compression complete");
         Console.WriteLine($"Archive size: {zippedFileStream.Length / 1024} kb");
 
         _uploading = true;
@@ -128,7 +123,10 @@ public class Program
 
     private static void UploadProgressCallback(long current, long length)
     {
-        if (!_uploading) return;
+        if (!_uploading) 
+            return;
+        
+        // TODO: don't do too frequent updates...
         var percent = Convert.ToDouble(current) / length * 100;
         Console.WriteLine($"Upload: {percent:F0}%");
     }

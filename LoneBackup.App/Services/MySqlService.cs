@@ -13,7 +13,7 @@ public class MySqlService
         _appConfig = appConfig ?? throw new ArgumentNullException(nameof(appConfig));
     }
 
-    public Stream GetDatabaseBackup(string databaseName)
+    public void GetDatabaseBackup(string databaseName, Stream outputStream)
     {
         var connStrBldr = new MySqlConnectionStringBuilder
         {
@@ -37,12 +37,7 @@ public class MySqlService
         conn.Open();
         Console.WriteLine($"DB: Dumping `{conn.Database}`...");
 
-        // TODO: can we avoid a temporary memory stream and put that directly to zip?
-        var backupStream = new MemoryStream();
-        mySqlBackup.ExportToMemoryStream(backupStream);
-        backupStream.Seek(0, SeekOrigin.Begin);
+        mySqlBackup.ExportToStream(outputStream);
         conn.Close();
-            
-        return backupStream;
     }
 }
