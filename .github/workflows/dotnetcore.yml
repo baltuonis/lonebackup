@@ -1,6 +1,9 @@
-name: Build 
+name: Build
 
-on: [push]
+on:
+  push:
+    branches: [ "main", "feature/aot" ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -8,12 +11,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1      
-      with:
-        dotnet-version: 8.0.*
-        
-    - name: Build with dotnet
-      working-directory: ./LoneBackup.App
-      run: dotnet build
+      - uses: actions/checkout@v1
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 8.0.*
+
+      - name: Build with dotnet
+        working-directory: ./LoneBackup.App
+        run: dotnet build
