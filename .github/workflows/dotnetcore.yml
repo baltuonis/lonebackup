@@ -1,4 +1,4 @@
-name: Build
+name: Build and test
 
 on:
   push:
@@ -20,3 +20,6 @@ jobs:
       - name: Build with dotnet
         working-directory: ./LoneBackup.App
         run: dotnet build
+
+      - name: Create linux executable
+        run: ./publish-linux.sh

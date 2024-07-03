@@ -49,3 +49,23 @@ crontab -e
 2. App Insights logging
 3. Upgrade Azure Storage packages
 4. Create a github action for releases
+
+## Deployments
+
+### Normal
+
+[//]: # (TODO:)
+
+### Docker
+
+Use docker when having dependency problems on remote machines (old servers):
+
+1. Copy lonebackup to remote machine
+2. Prepare config.json
+3. Copy `Dockerfile-remote` to `Dockerfile`
+4. Run commands
+
+```bash
+docker build -t lonebackup . 
+docker run --rm --network host lonebackup 
+```

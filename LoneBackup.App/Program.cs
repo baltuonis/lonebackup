@@ -88,6 +88,7 @@ public class Program
             zipStream.PutNextEntry(entry);
             StreamUtils.Copy(backupStream, zipStream, new byte[4096]);
             zipStream.CloseEntry();
+            
             Console.WriteLine($"DB: `{dbName}` dumped");
         }
 
