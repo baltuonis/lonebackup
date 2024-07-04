@@ -25,6 +25,7 @@ public class AzureStorageService
 
         Console.WriteLine("Uploading to Azure Storage: " + filePath);
         var blobClient = _client.GetBlobClient(filePath);
+        // TODO: make tier configurable
         await blobClient.UploadAsync(zippedFileStream, accessTier: AccessTier.Cool);
         Console.WriteLine("Upload complete");
     }
