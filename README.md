@@ -2,7 +2,7 @@
 
 A simple single executable tool to back up your MySQL/MariaDB databases to Azure Blob Storage.
 
-Purpose: no docker requirement, no fancy configuration files, low learning curve
+Purpose: no docker requirement, deploy anywhere, simple configuration
 
 ## Quick start
 
@@ -37,7 +37,7 @@ vim config.json
 }
 ```
 
-Run manual backup
+Run backup manually (validate everything works)
 
 ```bash
 ./lonebackup-x64 
@@ -50,17 +50,18 @@ crontab -e
 ```
 
 ```crontab
+# https://crontab.guru/
 5 1 * * * cd /var/lonebackup && ./lonebackup-x64
 ```
 
-## Docker deployment (for old machines)
+## Docker deployment 
 
 Use docker when having dependency problems on remote machines (old servers):
 
-1. Copy lonebackup to remote machine
-2. Prepare config.json
-3. Copy `Dockerfile-remote` to remote `Dockerfile`
-4. Run commands:
+1. Copy `lonebackup-x64` to remote machine
+2. Add `config.json`
+3. Copy `Dockerfile-remote` as `Dockerfile` to remote machine
+4. Run commands (remote):
 
 ```bash
 docker build -t lonebackup . 
@@ -69,7 +70,10 @@ docker run --rm --network host lonebackup
 
 ## TODO:
 
-1. Backup rotation
-2. App Insights logging
-3. Upgrade Azure Storage packages
-4. Create a GitHub action for releases
+1. Backup rotation (delete after X days)
+2. Allow configuring storage tier https://learn.microsoft.com/en-us/azure/storage/blobs/access-tiers-overview
+2. Backup folders
+3. App Insights logging
+4. Upgrade Azure Storage packages
+5. Create a GitHub action for releases
+6. Pull credentials from Azure AppConfig/KeyVault
