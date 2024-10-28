@@ -14,7 +14,7 @@ namespace LoneBackup.App;
 
 public class Program
 {
-    private const string AppVersion = "1.0.2";
+    private const string AppVersion = "1.0.3";
 
     static async Task<int> Main(string[] args)
     {

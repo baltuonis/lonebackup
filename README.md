@@ -13,6 +13,8 @@ mkdir -p /var/lonebackup && cd "$_"
 
 # Get the latest release
 wget https://github.com/baltuonis/lonebackup/releases/download/v1.0.3/lonebackup-x64
+chmod +x lonebackup-x64
+
 # Get sample config
 wget https://github.com/baltuonis/lonebackup/blob/master/LoneBackup.App/config.json
 
@@ -37,7 +39,7 @@ crontab -e
 5 1 * * * cd /var/lonebackup && ./lonebackup-x64
 ```
 
-## Docker deployment 
+## Docker deployment
 
 Use docker when having dependency problems on remote machines (old servers):
 
@@ -47,14 +49,38 @@ Use docker when having dependency problems on remote machines (old servers):
 4. Run commands (remote):
 
 ```bash
+wget https://github.com/baltuonis/lonebackup/releases/download/v1.0.3/lonebackup-x64
+chmod +x lonebackup-x64
+wget https://github.com/baltuonis/lonebackup/blob/master/LoneBackup.App/config.json
+wget -O Dockerfile https://github.com/baltuonis/lonebackup/blob/master/Dockerfile-remote
+
+vim config.json
+
 docker build -t lonebackup . 
-docker run --rm --network host lonebackup 
+# Test
+docker run --rm --network host lonebackup:latest 
+```
+
+Cron config
+
+```bash
+crontab -e
+
+0 8-23 * * * cd /var/lonebackup/ && docker run --rm --network host lonebackup 
+```
+
+### Docker upgrade
+
+```bash
+wget -O lonebackup-x64 https://github.com/baltuonis/lonebackup/releases/download/v1.0.3/lonebackup-x64
+chmod +x lonebackup-x64
+
+docker build -t lonebackup . 
 ```
 
 ## TODO:
 
-1. Backup rotation (delete after X days)
-2. Allow configuring storage tier https://learn.microsoft.com/en-us/azure/storage/blobs/access-tiers-overview
+1. Allow configuring storage tier https://learn.microsoft.com/en-us/azure/storage/blobs/access-tiers-overview
 2. Backup folders
 3. App Insights logging
 4. Upgrade Azure Storage packages
