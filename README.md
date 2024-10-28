@@ -16,7 +16,7 @@ wget https://github.com/baltuonis/lonebackup/releases/download/v1.0.3/lonebackup
 chmod +x lonebackup-x64
 
 # Get sample config
-wget https://github.com/baltuonis/lonebackup/blob/master/LoneBackup.App/config.json
+wget https://raw.githubusercontent.com/baltuonis/lonebackup/refs/heads/master/LoneBackup.App/config.json
 
 # Edit config
 vim config.json
@@ -43,16 +43,11 @@ crontab -e
 
 Use docker when having dependency problems on remote machines (old servers):
 
-1. Copy `lonebackup-x64` to remote machine
-2. Add `config.json`
-3. Copy `Dockerfile-remote` as `Dockerfile` to remote machine
-4. Run commands (remote):
-
 ```bash
 wget https://github.com/baltuonis/lonebackup/releases/download/v1.0.3/lonebackup-x64
 chmod +x lonebackup-x64
-wget https://github.com/baltuonis/lonebackup/blob/master/LoneBackup.App/config.json
-wget -O Dockerfile https://github.com/baltuonis/lonebackup/blob/master/Dockerfile-remote
+wget https://raw.githubusercontent.com/baltuonis/lonebackup/refs/heads/master/LoneBackup.App/config.json
+wget -O Dockerfile https://raw.githubusercontent.com/baltuonis/lonebackup/refs/heads/master/Dockerfile-remote
 
 vim config.json
 
