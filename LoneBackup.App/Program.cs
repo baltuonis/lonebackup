@@ -16,8 +16,15 @@ public class Program
 {
     private const string AppVersion = "1.0.3";
 
+    // TODO: add dry run (check connections, don't upload/cleanup)
+    // TODO: logger + generic host container
+    // TODO: allow CTRL+C
+    // https://github.com/natemcmaster/CommandLineUtils
+    // https://darthpedro.net/2024/06/26/using-generichost-in-a-c-console-application/
+    // https://learn.microsoft.com/en-us/azure/azure-monitor/app/worker-service
     static async Task<int> Main(string[] args)
     {
+        // https://darthpedro.net/2024/06/26/using-generichost-in-a-c-console-application/
         var configFileOption = new Option<string>(
             name: "-c",
             description: "Configuration file path (default: config.json)",
