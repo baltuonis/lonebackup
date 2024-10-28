@@ -10,31 +10,14 @@ SSH to your server
 
 ```bash
 mkdir -p /var/lonebackup && cd "$_"
+
 # Get the latest release
-wget https://github.com/baltuonis/lonebackup/releases/download/v1.0.2/lonebackup-x64
+wget https://github.com/baltuonis/lonebackup/releases/download/v1.0.3/lonebackup-x64
+# Get sample config
+wget https://github.com/baltuonis/lonebackup/blob/master/LoneBackup.App/config.json
 
+# Edit config
 vim config.json
-```
-
-*config.json*
-
-```json
-{
-  "AzureStorageConnectionString": "storagestring",
-  "AzureStorageContainer": "container",
-  "AzureStorageFolder": "folder",
-  "ArchivePassword": "abcd",
-  "MySQL": {
-    "Host": "localhost",
-    "Port": 3306,
-    "User": "root",
-    "Pwd": "toor",
-    "Databases": [
-      "dbname1"
-    ]
-  },
-  "CreateLocalFile": false
-}
 ```
 
 Run backup manually (validate everything works)
