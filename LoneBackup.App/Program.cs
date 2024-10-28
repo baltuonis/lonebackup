@@ -3,6 +3,7 @@ using System.CommandLine;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using ICSharpCode.SharpZipLib.Zip;
 using LoneBackup.App.Services;
@@ -53,10 +54,12 @@ public class Program
         var mysqlService = new MySqlService(_config);
         var azureService = new AzureStorageService(_config);
 
+        await azureService.TryDeleteOldArchivesAsync(CancellationToken.None);
+
         Console.WriteLine("Starting database(s) dump process");
 
-        using var zippedFileStream = new ObservableMemoryStream(UploadProgressCallback);
-        using var zipStream = new ZipOutputStream(zippedFileStream);
+        await using var zippedFileStream = new ObservableMemoryStream(UploadProgressCallback);
+        await using var zipStream = new ZipOutputStream(zippedFileStream);
 
         zipStream.SetLevel(9);
         zipStream.Password = _config.ArchivePassword;

@@ -21,7 +21,7 @@ namespace LoneBackup.App.Config
 
         public AppConfig Build()
         {
-
+            // TODO: use option binding https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options?view=aspnetcore-8.0
             var azureConnectionString = GetConfigString("AzureStorageConnectionString");
             var azureStorageContainer = GetConfigString("AzureStorageContainer");
             var azureStorageFolder = GetConfigString("AzureStorageFolder");
@@ -30,6 +30,7 @@ namespace LoneBackup.App.Config
             var mySqlPort = GetConfigString("MySQL:Port");
             var mySqlUser = GetConfigString("MySQL:User");
             var mySqlPwd = GetConfigString("MySQL:Pwd");
+            var deleteOlderThanDays = GetConfigInt("Storage:DeleteOlderThanDays");
             var mysqlDatabases = GetConfigStringArray("MySQL:Databases");
             var createLocalFile = Convert.ToBoolean(GetConfigString("CreateLocalFile"));
 
@@ -40,7 +41,7 @@ namespace LoneBackup.App.Config
             }
 
             var config = new AppConfig(azureConnectionString, azureStorageContainer, azureStorageFolder, archivePassword, 
-                mySqlHost, mySqlPort, mySqlUser, mySqlPwd, mysqlDatabases, createLocalFile);
+                mySqlHost, mySqlPort, mySqlUser, mySqlPwd, mysqlDatabases, createLocalFile, deleteOlderThanDays);
             
             return config;
         }
@@ -59,6 +60,14 @@ namespace LoneBackup.App.Config
             }
             
             return values;
+        }
+        
+        private int GetConfigInt(string paramName)
+        {
+            var value = _configRoot[paramName];
+            if (string.IsNullOrWhiteSpace(paramName))
+                throw new Exception($"Config error: argument `{nameof(paramName)}` is empty");
+            return Convert.ToInt32(value);
         }
 
         private string GetConfigString(string paramName)

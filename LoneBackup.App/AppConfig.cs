@@ -14,9 +14,12 @@ namespace LoneBackup.App
         public int DbPort { get; }
         public string[] Databases { get; }
         public bool CreateLocalFile { get; }
+        public int DeleteOlderThanDays { get; }
 
-        public AppConfig(string azureConnectionString, string azureContainer, string azureFolder, string archivePassword,
-            string dbHost, string dbPort, string dbUser, string dbPassword, string[] databases, bool createLocalFile)
+        public AppConfig(string azureConnectionString, string azureContainer, string azureFolder,
+            string archivePassword,
+            string dbHost, string dbPort, string dbUser, string dbPassword, string[] databases, bool createLocalFile,
+            int deleteOlderThanDays)
         {
             AzureConnectionString = azureConnectionString;
             AzureContainer = azureContainer;
@@ -28,6 +31,7 @@ namespace LoneBackup.App
             DbPort = Convert.ToInt32(dbPort);
             Databases = databases;
             CreateLocalFile = createLocalFile;
+            DeleteOlderThanDays = deleteOlderThanDays;
         }
     }
 }

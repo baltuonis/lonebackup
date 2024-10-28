@@ -3,6 +3,9 @@
   "AzureStorageContainer": "container",
   "AzureStorageFolder": "folder",
   "ArchivePassword": "abcd",
+  "Storage": {
+    "DeleteOlderThanDays": 31
+  },
   "MySQL": {
     "Host": "localhost",
     "Port": 3306,
