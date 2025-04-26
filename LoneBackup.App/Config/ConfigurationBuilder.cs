@@ -36,8 +36,7 @@ namespace LoneBackup.App.Config
 
             if (mysqlDatabases.Length == 0)
             {
-                throw new Exception("Config error: please add at least one database inside `MySQL:Databases`");
-                
+                Console.WriteLine("No databases to backup");
             }
 
             var config = new AppConfig(azureConnectionString, azureStorageContainer, azureStorageFolder, archivePassword, 
